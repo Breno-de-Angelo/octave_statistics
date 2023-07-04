@@ -225,7 +225,7 @@ k
 lambda_estimate = mean(xx .^ k_estimate) ^ (1/k_estimate)
 
 
-% Tarefa 7 - Corrigir
+% Tarefa 7
 figure();
 hold on;
 printf("\n\n\n==== Tarefa 7 ===\n");
@@ -259,13 +259,14 @@ printf("     Seção 4\n");
 printf("==================\n");
 
 
-% Tarefa 8
+% Tarefa 1
 printf("\n\n\n==== Tarefa 1 ===\n");
 FDP_Pareto = @(x, mu, sigma, ksi) 1/sigma * (1 + ksi * (x - mu) / sigma) .^ (-1/ksi - 1)
 
 
-printf("\n\n\n==== Tarefa 2 ===\n");
+% Tarefa 2
 xx = 0:0.01:5;
+figure();
 hold on;
 plot(xx, FDP_Pareto(xx, 0, 1, 1));
 plot(xx, FDP_Pareto(xx, 0, 1, 5));
@@ -275,6 +276,43 @@ plot(xx, FDP_Pareto(xx, 0, 2, 5));
 plot(xx, FDP_Pareto(xx, 0, 2, 20));
 
 
+% Tarefa 3
+function retval = FDA_Pareto(x, mu, sigma, ksi)
+	if (ksi == 0)
+		retval = 1 - exp(- (x - mu) / sigma);
+	else
+		retval = 1 - (1 + ksi * (x - mu) / sigma) .^ (-1/ksi);
+	endif
+endfunction
+figure();
+hold on;
+plot(xx, FDA_Pareto(xx, 0, 1, 1));
+plot(xx, FDA_Pareto(xx, 0, 1, 5));
+plot(xx, FDA_Pareto(xx, 0, 1, 20));
+plot(xx, FDA_Pareto(xx, 0, 2, 1));
+plot(xx, FDA_Pareto(xx, 0, 2, 5));
+plot(xx, FDA_Pareto(xx, 0, 2, 20));
 
 
+% Tarefa 4
+n = 1000;
+xx = gprnd(1, 1, 0, [1 n]);
+
+
+% Tarefa 5
+printf("\n\n\n==== Tarefa 5 ===\n");
+figure();
+k = ceil(1 + 3.322 * log(n))
+[nn_hist xx_hist] = hist(xx, k);
+delta_x = xx_hist(2) - xx_hist(1);
+[yy_hist xx_hist] = hist(xx, k, 1/delta_x);
+mu_estimate = 0
+expected_value = 1 / n * sum(xx)
+variance = 1 / (n - 1) * sum ((xx - expected_value) .^ 2)
+ksi_estimate = 1/2 * (1 - (expected_value - mu_estimate) ^ 2 / variance)
+sigma_estimate =  (expected_value - 0) * (1 - ksi_estimate)
+xx_fit = 0:0.01:12;
+yy_hat = FDP_Pareto(xx_hist, mu_estimate, sigma_estimate, ksi_estimate);
+plot(xx_fit, FDP_Pareto(xx_fit, mu_estimate, sigma_estimate, ksi_estimate));
+RSS = sumsq(yy_hat - yy_hist)
 
