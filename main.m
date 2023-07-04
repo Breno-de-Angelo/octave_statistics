@@ -1,3 +1,6 @@
+addpath(['./' 'equation_root'], ['./' 'integral_func'])
+
+
 % Seção 1
 printf("==================\n");
 printf("     Seção 1\n");
@@ -64,15 +67,44 @@ x = erfinv(49/50) - 2
 
 
 % Tarefa 7
+printf("\n\n\n==== Tarefa 7 ===\n");
+mu = -2;
+sigma = 0.7;
+func = @(x) FDP_Normal(x, mu, sigma)
+a = mu - 10 * sigma;
+b = x;
+for n = 1:12
+	printf("n = %d\n", n);
+	integral_correct = integral(func, b, a);
+	
+	printf("Integral Trapezios Repetida:\n")
+	integral_result = integralTrapeziosRepetidaFunc(func, a, b, n, 0);
+	printf("\tValor = %f\n", integral_result);
+	printf("\tErro = %f\n", abs(integral_correct - integral_result));
+	
+	printf("Integral Simpson Repetida:\n");
+	integral_result = integralSimpsonRepetidaFunc(func, a, b, n, 0);
+	printf("\tValor = %f\n", integral_result);
+	printf("\tErro = %f\n", abs(integral_correct - integral_result));
+	
+	printf("Integral Simpson 3/8 Repetida:\n");
+	integral_result = integralSimpsonRepetidaFunc(func, a, b, n, 0);
+	printf("\tValor = %f\n", integral_result);
+	printf("\tValor = %f\n", abs(integral_correct - integral_result));
 
+	printf("Integral Quadratura Gaussiana:\n");
+	C = coefGaussLegendre( n + 1 );
+	[T, A] = tabelaAbcissasPesosGaussLegendre( C );
+	integral_result = integralGaussLegendreFunc(func, a, b, n, T, A, 0);
+	printf("\tValor = %f\n", integral_result);
+	printf("\tValor = %f\n", abs(integral_correct - integral_result));
+endfor
 
 
 % Tarefa 8
 semente = 2021;
 randn('seed', semente);
 n = 1000;
-mu = -2;
-sigma = 0.7;
 xx = mu + sigma .* randn(1, n);
 
 
@@ -85,7 +117,10 @@ printf("|sigma_estimate - sigma| = %f\n",  abs(sigma_estimate - sigma));
 
 
 % Tarefa 10
-
+printf("\n\n\n==== Tarefa 9 ===\n");
+func = @(x) FDA_Normal(x, mu, sigma) - 0.99;
+raizBisecPosFalsa( 0, func, -1, 0, 0, 10000)
+solucao_analitica = mu + sigma * sqrt(2) * erfinv(2 * 0.99 - 1)
 
 
 
@@ -96,21 +131,23 @@ printf("     Seção 2\n");
 printf("==================\n");
 
 
-% Tarefa 1 - Alinhar histograma com curva
+% Tarefa 1
+printf("\n\n\n==== Tarefa 1 ===\n");
 figure();
 hold on;
-printf("\n==== Tarefa 1 ===\n");
 k = ceil(1 + 3.322 * log(n))
-[nn_hist xx_hist] = hist(xx, k, 1);
-hist(xx, k, 1)
+[nn_hist xx_hist] = hist(xx, k);
+delta_x = xx_hist(2) - xx_hist(1);
+[yy_hist xx_hist] = hist(xx, k, 1/delta_x);
+hist(xx, k, 1/delta_x)
 
 
 % Tarefa 2
+printf("\n\n\n==== Tarefa 2 ===\n");
 xx_fit = -7:0.01:3;
 plot(xx_fit, normpdf(xx_fit, mu_estimate, sigma_estimate));
 yy_hat = normpdf(xx_hist, mu_estimate, sigma_estimate);
-RSS = sumsq(yy_hat - nn_hist)
-
+RSS = sumsq(yy_hat - yy_hist)
 
 
 
@@ -122,7 +159,7 @@ printf("==================\n");
 
 
 % Tarefa 1
-printf("\n==== Tarefa 1 ===\n");
+printf("\n\n\n==== Tarefa 1 ===\n");
 FDP_Weibull = @(x, lambda, k) k/lambda .* (x./lambda)^(k-1) .* exp(-(x./lambda).^k)
 
 
@@ -193,13 +230,14 @@ figure();
 hold on;
 printf("\n\n\n==== Tarefa 7 ===\n");
 k = ceil(1 + 3.322 * log(n))
-[nn_hist xx_hist] = hist(xx, k, 1);
-hist(xx, k, 1);
-
+[nn_hist xx_hist] = hist(xx, k);
+delta_x = xx_hist(2) - xx_hist(1);
+[yy_hist xx_hist] = hist(xx, k, 1/delta_x);
+hist(xx, k, 1/delta_x)
 xx_fit = 0:0.01:8;
 plot(xx_fit, wblpdf(xx_fit, lambda_estimate, k_estimate));
-% yy_hat = wblpdf(xx_hist, lambda_estimate, k_estimate);
-% RSS = sumsq(yy_hat - nn_hist)
+yy_hat = wblpdf(xx_hist, lambda_estimate, k_estimate);
+RSS = sumsq(yy_hat - yy_hist)
 
 
 % Tarefa 8
@@ -209,6 +247,34 @@ sigma_estimate = sqrt(1/(n-1)*sumsq(xx - mu_estimate))
 printf("|mu_estimate - mu| = %f\n",  abs(mu_estimate - mu));
 printf("|sigma_estimate - sigma| = %f\n",  abs(sigma_estimate - sigma));
 plot(xx_fit, normpdf(xx_fit, mu_estimate, sigma_estimate));
-% yy_hat = normpdf(xx_fit, mu_estimate, sigma_estimate);
-% RSS = sumsq(yy_hat - nn_hist)
+yy_hat = normpdf(xx_hist, mu_estimate, sigma_estimate);
+RSS = sumsq(yy_hat - yy_hist)
+
+
+
+% Seção 4
+printf("\n\n\n");
+printf("==================\n");
+printf("     Seção 4\n");
+printf("==================\n");
+
+
+% Tarefa 8
+printf("\n\n\n==== Tarefa 1 ===\n");
+FDP_Pareto = @(x, mu, sigma, ksi) 1/sigma * (1 + ksi * (x - mu) / sigma) .^ (-1/ksi - 1)
+
+
+printf("\n\n\n==== Tarefa 2 ===\n");
+xx = 0:0.01:5;
+hold on;
+plot(xx, FDP_Pareto(xx, 0, 1, 1));
+plot(xx, FDP_Pareto(xx, 0, 1, 5));
+plot(xx, FDP_Pareto(xx, 0, 1, 20));
+plot(xx, FDP_Pareto(xx, 0, 2, 1));
+plot(xx, FDP_Pareto(xx, 0, 2, 5));
+plot(xx, FDP_Pareto(xx, 0, 2, 20));
+
+
+
+
 
