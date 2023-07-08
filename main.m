@@ -316,3 +316,59 @@ yy_hat = FDP_Pareto(xx_hist, mu_estimate, sigma_estimate, ksi_estimate);
 plot(xx_fit, FDP_Pareto(xx_fit, mu_estimate, sigma_estimate, ksi_estimate));
 RSS = sumsq(yy_hat - yy_hist)
 
+% PROBLEMA PRÁTICO
+printf("\n\n\n");
+printf("==================\n");
+printf("     Problema Prático\n");
+printf("==================\n");
+
+wspd = load("vetorWSPD").wspd;
+wvht = load("vetorWVHT").wvht;
+wspd(wspd==0) = 0.1;
+wvht(wvht==0) = 0.1;
+
+wspd = wspd(wspd~=99);
+wvht = wvht(wvht~=99);
+
+t_wspd = [1:1:length(wspd)];
+t_wvht = [1:1:length(wvht)];
+
+figure()
+plot(t_wspd, wspd);
+
+figure()
+plot(t_wvht, wvht, '.', 'MarkerSize', 0.2);
+
+
+% WSPD
+k_wspd = ceil(1 + 3.322 * log(length(wspd)));
+mu_estimate = 1/length(wspd) * sum(wspd);
+sigma_estimate = sqrt(1/(length(wspd)-1)*sumsq(wspd - mu_estimate));
+
+figure()
+[nn, xx] = hist(wspd, k_wspd);
+hist(wspd, k_wspd);
+delta = xx(2) - xx(1);
+areaHist = sum(delta*nn);
+hold on
+xx_fit = xx(1):0.01:xx(end);
+plot(xx_fit, normpdf(xx_fit, mu_estimate, sigma_estimate)*areaHist, '.');
+plot(xx_fit, gppdf(xx_fit, gpfit(wspd)(1), gpfit(wspd)(2),0)*areaHist, '.');
+hold off
+
+% WVHT
+k_wvht = ceil(1 + 3.322 * log(length(wvht)));
+mu_estimate = 1/length(wvht) * sum(wvht);
+sigma_estimate = sqrt(1/(length(wvht)-1)*sumsq(wvht - mu_estimate));
+
+figure()
+[nn, xx] = hist(wvht, k_wvht);
+hist(wvht, k_wvht);
+delta = xx(2) - xx(1);
+areaHist = sum(delta*nn);
+hold on
+xx_fit = xx(1):0.01:xx(end);
+plot(xx_fit, normpdf(xx_fit, mu_estimate, sigma_estimate)*areaHist, '.');
+##plot(xx_fit, wblpdf(xx_fit, wblfit(wvht)(2), wblfit(wvht)(1))*areaHist, '.');
+plot(xx_fit, gppdf(xx_fit, gpfit(wvht)(1), gpfit(wvht)(2),0)*areaHist, '.');
+hold off
