@@ -73,32 +73,48 @@ sigma = 0.7;
 func = @(x) FDP_Normal(x, mu, sigma)
 a = mu - 10 * sigma;
 b = x;
+erros = zeros([12 4]);
 for n = 1:12
 	printf("n = %d\n", n);
-	integral_correct = integral(func, b, a);
+	integral_correct = normcdf(b, mu, sigma) - normcdf(a, mu, sigma);
 	
 	printf("Integral Trapezios Repetida:\n")
 	integral_result = integralTrapeziosRepetidaFunc(func, a, b, n, 0);
+	erro = abs(integral_correct - integral_result)
 	printf("\tValor = %f\n", integral_result);
-	printf("\tErro = %f\n", abs(integral_correct - integral_result));
+	printf("\tErro = %f\n", erro);
+	erros(n, 1) = erro;
 	
 	printf("Integral Simpson Repetida:\n");
 	integral_result = integralSimpsonRepetidaFunc(func, a, b, n, 0);
+	erro = abs(integral_correct - integral_result);
 	printf("\tValor = %f\n", integral_result);
-	printf("\tErro = %f\n", abs(integral_correct - integral_result));
+	printf("\tErro = %f\n", erro);
+	erros(n, 2) = erro;
 	
 	printf("Integral Simpson 3/8 Repetida:\n");
-	integral_result = integralSimpsonRepetidaFunc(func, a, b, n, 0);
+	integral_result = integralSimpson38RepetidaFunc(func, a, b, n, 0);
+	erro = abs(integral_correct - integral_result);
 	printf("\tValor = %f\n", integral_result);
-	printf("\tValor = %f\n", abs(integral_correct - integral_result));
+	printf("\tValor = %f\n", erro);
+	erros(n, 3) = erro;
 
 	printf("Integral Quadratura Gaussiana:\n");
 	C = coefGaussLegendre( n + 1 );
 	[T, A] = tabelaAbcissasPesosGaussLegendre( C );
 	integral_result = integralGaussLegendreFunc(func, a, b, n, T, A, 0);
+	erro = abs(integral_correct - integral_result);
 	printf("\tValor = %f\n", integral_result);
-	printf("\tValor = %f\n", abs(integral_correct - integral_result));
+	printf("\tValor = %f\n", erro);
+	erros(n, 4) = erro;
 endfor
+erros
+figure()
+bar(1:12, erros);
+legend('Trapezios', 'Simpson 1/3', 'Simpson 3/8', 'Quadratura Gaussiana');
+xlabel('Quantidade de Subdivisões');
+ylabel('Erro');
+title('Evolução do Erro em Relação à Quantidade de Subdivisões');
 
 
 % Tarefa 8
