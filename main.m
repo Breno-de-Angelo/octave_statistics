@@ -87,10 +87,11 @@ x = erfinv(49/50) - 2
 
 % Tarefa 7
 mu = -2;
-sigma = 0.7;
+sigma2 = 0.5;
+sigma = sqrt(sigma2);
 func = @(x) FDP_Normal(x, mu, sigma);
 a = mu - 10 * sigma;
-b = 10;
+b = -2 + erfinv(49/50);
 erros = zeros([12 4]);
 fprintf('------------------------------------------------------------------------------------------\n');
 fprintf('|   n   |   Trapezios   |   Simpson   |   Simpson 3/8   |   Quadratura Gaussiana   |\n');
@@ -111,13 +112,13 @@ for n = 1:12
     error_simpson = abs(integral_correct - integral_result);
     %fprintf('   %12.6f   |', integral_result);
     fprintf('   %12.6f   |', error_simpson);
-    erros(n, 1) = error_simpson;
+    erros(n, 2) = error_simpson;
 
     integral_result = integralSimpson38RepetidaFunc(func, a, b, n, 0);
     error_simpson38 = abs(integral_correct - integral_result);
     %fprintf('   %15.6f   |', integral_result);
     fprintf('   %15.6f   |', error_simpson38);
-    erros(n, 1) = error_simpson38;
+    erros(n, 3) = error_simpson38;
 
     C = coefGaussLegendre(n + 1);
     [T, A] = tabelaAbcissasPesosGaussLegendre(C);
@@ -125,7 +126,7 @@ for n = 1:12
     error_gauss = abs(integral_correct - integral_result);
     %fprintf('   %22.6f   |', integral_result);
     fprintf('   %22.6f   |', error_gauss);
-    erros(n, 1) = error_gauss;
+    erros(n, 4) = error_gauss;
 
     fprintf('\n');
 end
