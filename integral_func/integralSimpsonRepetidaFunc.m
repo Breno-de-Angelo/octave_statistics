@@ -2,8 +2,8 @@
 %% Integração numérica usando a regra 1/3 de Simpson repetida
 %%
 %% Input: a função a ser integrada, os limites inferior 'a' e superior 'b' de integração
-%%        o número 'n' de subdivisões (=número de nós menos 1). 
-%% 
+%%        o número 'n' de subdivisões (=número de nós menos 1).
+%%
 %% Output: Integral numérica
 %% Restrições: número 'n' de subdivisões tem que ser par
 %%
@@ -14,7 +14,7 @@ function ISR = integralSimpsonRepetidaFunc( func, a, b, n, verbose  )
 	isodd = @(x) x-2*floor(x/2);
 
 	if isodd( n )
-		fprintf('Numero de subdivisoes n=%d. Tem que ser numero par !\n', n); % wait();
+	%	fprintf('Numero de subdivisoes n=%d. \n', n); % wait();
 		ISR = NaN;
 		return;
 	end
@@ -55,7 +55,7 @@ function ISR = integralSimpsonRepetidaFunc( func, a, b, n, verbose  )
 		fprintf('f(x%d)', 2*i ); if i==n2-1 fprintf(' }'); else fprintf('+'); end;
 	end
 	fprintf(' ]\n');
-	
+
 	fprintf('       = %.2f/3[ f(%.2f)+f(%.2f) + 4{ ', h, a, b );
 	for i=1:n2
 		fprintf('f(%.2f)', a+h*(2*i-1) ); if i==n2 fprintf(' }'); else fprintf('+'); end;
@@ -65,7 +65,7 @@ function ISR = integralSimpsonRepetidaFunc( func, a, b, n, verbose  )
 		fprintf('f(%.2f)', a+h*(2*i) ); if i==n2-1 fprintf(' }'); else fprintf('+'); end;
 	end
 	fprintf(' ]\n');
-	
+
 	fprintf('       = %.3f[ %.3f+%.3f + 4{ ', h/3, func(a), func(b) );
 	for i=1:n2
 		fprintf('%.3f', func(a+h*(2*i-1)) ); if i==n2 fprintf(' }'); else fprintf('+'); end;
@@ -75,9 +75,9 @@ function ISR = integralSimpsonRepetidaFunc( func, a, b, n, verbose  )
 		fprintf('%.3f', func(a+h*(2*i)) ); if i==n2-1 fprintf(' }'); else fprintf('+'); end;
 	end
 	fprintf(' ] = %.10f\n', ISR);
-	
+
 	numcasas = 6;
-	
+
 	fprintf('       = %s [ %s + %s + 4{ ', dec2fracstr(h/3,numcasas),...
 			dec2fracstr(func(a),numcasas),...
 			dec2fracstr(func(b),numcasas) );

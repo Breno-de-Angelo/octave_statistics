@@ -2,8 +2,8 @@
 %% Integração numérica usando a regra 3/8 de Simpson repetida
 %%
 %% Input: a função a ser integrada, os limites inferior 'a' e superior 'b' de integração
-%%        o número 'n' de subdivisões (=número de nós menos 1). 
-%% 
+%%        o número 'n' de subdivisões (=número de nós menos 1).
+%%
 %% Output: Integral numérica
 %% Restrições: número 'n' de subdivisões tem que ser divisível por três
 %%
@@ -12,9 +12,9 @@ function ISR38 = integralSimpson38RepetidaFunc( func, a, b, n, verbose  )
 	%% Decide se número é múltiplo de três: Uso de uma função anônima
 	% http://www.mathworks.com/help/matlab/matlab_prog/anonymous-functions.html
 	ismult3 = @(x) (x - 3*floor(x/3) == 0);
-	
+
 	if ~ismult3( n )
-		fprintf('Numero de subdivisoes n=%d. Tem que ser numero multiplo de três !\n', n); % wait();
+%		fprintf('Numero de subdivisoes n=%d. \n', n); % wait();
 		ISR38 = NaN;
 		return;
 	end
@@ -61,7 +61,7 @@ function ISR38 = integralSimpson38RepetidaFunc( func, a, b, n, verbose  )
 	fprintf(' ]\n');
 
 	fprintf('       = 3*%.2f/8[ f(%.2f)+f(%.2f) + 3{ ', h, a, b );
-	
+
 	for i=1:n3
 		fprintf('f(%.2f)+f(%.2f)', a+h*(3*i-2), a+h*(3*i-1) ); if i==n3 fprintf(' }'); else fprintf('+'); end;
 	end
@@ -70,7 +70,7 @@ function ISR38 = integralSimpson38RepetidaFunc( func, a, b, n, verbose  )
 		fprintf('f(%.2f)', a+h*3*i ); if i==n3-1 fprintf(' }'); else fprintf('+'); end;
 	end
 	fprintf(' ]\n');
-		
+
 	fprintf('       = %.3f[ %.3f+%.3f + 3{ ', 3*h/8, func(a), func(b) );
 	for i=1:n3
 		fprintf('%.2f+%.2f', func(a+h*(3*i-2)), func(a+h*(3*i-1)) ); if i==n3 fprintf(' }'); else fprintf('+'); end;
@@ -80,7 +80,7 @@ function ISR38 = integralSimpson38RepetidaFunc( func, a, b, n, verbose  )
 		fprintf('%.3f', func(a+h*3*i) ); if i==n3-1 fprintf(' }'); else fprintf('+'); end;
 	end
 	fprintf(' ] = %.10f\n', ISR38);
-	
+
 	numcasas = 6;
 	fprintf('       = %s [ %s + %s + 3{ ', dec2fracstr(3*h/8,numcasas),...
 			dec2fracstr(func(a),numcasas),...

@@ -3,13 +3,13 @@
 %%
 %% Input: a função a ser integrada, os limites inferior 'a' e superior 'b' de integração
 %%        o número 'n' de subdivisões. Variável lógica, se solução deve ser explicada
-%% 
+%%
 %% Output: Integral numérica
 %%
 function ITR = integralTrapeziosRepetidaFunc( func, a, b, n, verbose )
 
 	if mod(n,1) ~= 0
-		error('Quantidade de nos ''n'' tem que ser inteiro');
+		error('Quantidade de nos ''n');
 	end
 
 	if verbose

@@ -36,6 +36,16 @@ plot(xx, normpdf(xx, 0, sqrt(0.2)));
 plot(xx, normpdf(xx, 0, sqrt(5.0)));
 plot(xx, normpdf(xx, -2, sqrt(0.5)));
 
+% Adicionar legenda
+legend('\mu = 0, \sigma^2 =1', '\mu = 0, \sigma^2 =0.2', '\mu = 0,\sigma^2 =5.0', '\mu = -2,\sigma^2 = 0.5');
+
+% Nome nos eixos e título
+xlabel('x');
+ylabel(' \phi_{\mu,\sigma^2}(x)');
+title('Distribuições Normais');
+
+hold off;
+
 
 % Tarefa 5
 printf("\n\n\n==== Tarefa 5 ===\n");
@@ -56,6 +66,15 @@ plot(xx, normcdf(xx, 0, sqrt(0.2)));
 plot(xx, normcdf(xx, 0, sqrt(5.0)));
 plot(xx, normcdf(xx, -2, sqrt(0.5)));
 
+% Adicionar legenda
+legend('\mu = 0, \sigma^2 =1', '\mu = 0, \sigma^2 =0.2', '\mu = 0,\sigma^2 =5.0', '\mu = -2,\sigma^2 = 0.5', 'Location', 'southeast');
+
+% Nome nos eixos e título
+xlabel('x');
+ylabel(' \Phi_{\mu,\sigma^2}(x)');
+title('Função de Distribuição Acumulada');
+
+
 
 % Tarefa 6
 printf("\n\n\n==== Tarefa 6 ===\n");
@@ -67,54 +86,56 @@ x = erfinv(49/50) - 2
 
 
 % Tarefa 7
-printf("\n\n\n==== Tarefa 7 ===\n");
 mu = -2;
 sigma = 0.7;
-func = @(x) FDP_Normal(x, mu, sigma)
+func = @(x) FDP_Normal(x, mu, sigma);
 a = mu - 10 * sigma;
-b = x;
+b = 10;
 erros = zeros([12 4]);
-for n = 1:12
-	printf("n = %d\n", n);
-	integral_correct = normcdf(b, mu, sigma) - normcdf(a, mu, sigma);
-	
-	printf("Integral Trapezios Repetida:\n")
-	integral_result = integralTrapeziosRepetidaFunc(func, a, b, n, 0);
-	erro = abs(integral_correct - integral_result)
-	printf("\tValor = %f\n", integral_result);
-	printf("\tErro = %f\n", erro);
-	erros(n, 1) = erro;
-	
-	printf("Integral Simpson Repetida:\n");
-	integral_result = integralSimpsonRepetidaFunc(func, a, b, n, 0);
-	erro = abs(integral_correct - integral_result);
-	printf("\tValor = %f\n", integral_result);
-	printf("\tErro = %f\n", erro);
-	erros(n, 2) = erro;
-	
-	printf("Integral Simpson 3/8 Repetida:\n");
-	integral_result = integralSimpson38RepetidaFunc(func, a, b, n, 0);
-	erro = abs(integral_correct - integral_result);
-	printf("\tValor = %f\n", integral_result);
-	printf("\tValor = %f\n", erro);
-	erros(n, 3) = erro;
+fprintf('------------------------------------------------------------------------------------------\n');
+fprintf('|   n   |   Trapezios   |   Simpson   |   Simpson 3/8   |   Quadratura Gaussiana   |\n');
+fprintf('------------------------------------------------------------------------------------------\n');
 
-	printf("Integral Quadratura Gaussiana:\n");
-	C = coefGaussLegendre( n + 1 );
-	[T, A] = tabelaAbcissasPesosGaussLegendre( C );
-	integral_result = integralGaussLegendreFunc(func, a, b, n, T, A, 0);
-	erro = abs(integral_correct - integral_result);
-	printf("\tValor = %f\n", integral_result);
-	printf("\tValor = %f\n", erro);
-	erros(n, 4) = erro;
-endfor
-erros
+for n = 1:12
+    fprintf('|   %2d  |', n);
+
+	integral_correct = normcdf(b, mu, sigma) - normcdf(a, mu, sigma);
+
+    integral_result = integralTrapeziosRepetidaFunc(func, a, b, n, 0);
+    error_trapezoid = abs(integral_correct - integral_result);
+    %fprintf('   %12.6f   |', integral_result);
+    fprintf('   %12.6f   |', error_trapezoid);
+    erros(n, 1) = error_trapezoid;
+
+    integral_result = integralSimpsonRepetidaFunc(func, a, b, n, 0);
+    error_simpson = abs(integral_correct - integral_result);
+    %fprintf('   %12.6f   |', integral_result);
+    fprintf('   %12.6f   |', error_simpson);
+    erros(n, 1) = error_simpson;
+
+    integral_result = integralSimpson38RepetidaFunc(func, a, b, n, 0);
+    error_simpson38 = abs(integral_correct - integral_result);
+    %fprintf('   %15.6f   |', integral_result);
+    fprintf('   %15.6f   |', error_simpson38);
+    erros(n, 1) = error_simpson38;
+
+    C = coefGaussLegendre(n + 1);
+    [T, A] = tabelaAbcissasPesosGaussLegendre(C);
+    integral_result = integralGaussLegendreFunc(func, a, b, n, T, A, 0);
+    error_gauss = abs(integral_correct - integral_result);
+    %fprintf('   %22.6f   |', integral_result);
+    fprintf('   %22.6f   |', error_gauss);
+    erros(n, 1) = error_gauss;
+
+    fprintf('\n');
+end
 figure()
 bar(1:12, erros);
 legend('Trapezios', 'Simpson 1/3', 'Simpson 3/8', 'Quadratura Gaussiana');
 xlabel('Quantidade de Subdivisões');
 ylabel('Erro');
 title('Evolução do Erro em Relação à Quantidade de Subdivisões');
+fprintf('------------------------------------------------------------------------------------------\n');
 
 
 % Tarefa 8
@@ -156,6 +177,9 @@ k = ceil(1 + 3.322 * log(n))
 delta_x = xx_hist(2) - xx_hist(1);
 [yy_hist xx_hist] = hist(xx, k, 1/delta_x);
 hist(xx, k, 1/delta_x)
+xlabel('Distribuicao Normal');
+ylabel('Densidade de Probabilidade');
+title('Histograma');
 
 
 % Tarefa 2
@@ -200,6 +224,15 @@ plot(xx, wblpdf(xx, 1, 1));
 plot(xx, wblpdf(xx, 1, 1.5));
 plot(xx, wblpdf(xx, 1, 5));
 
+% Adicionar legenda
+legend('\lambda=1,k=0,5', '\lambda=1,k=1','\lambda=1,k=1,5', '\lambda=1,k=5');
+
+% Nome nos eixos e título
+xlabel('s');
+ylabel('P');
+title('Distribuicao de Wibull');
+
+
 
 % Tarefa 4
 printf("\n\n\n==== Tarefa 4 ===\n");
@@ -221,6 +254,14 @@ plot(xx, wblcdf(xx, 1, 0.5));
 plot(xx, wblcdf(xx, 1, 1));
 plot(xx, wblcdf(xx, 1, 1.5));
 plot(xx, wblcdf(xx, 1, 5));
+
+% Adicionar legenda
+legend('\lambda=1,k=0,5', '\lambda=1,k=1','\lambda=1,k=1,5', '\lambda=1,k=5', 'Location', 'southeast');
+
+% Nome nos eixos e título
+xlabel('s');
+ylabel('P');
+title('Distribuicao de Wibull FDA');
 
 
 % Tarefa 5
@@ -245,15 +286,18 @@ lambda_estimate = mean(xx .^ k_estimate) ^ (1/k_estimate)
 figure();
 hold on;
 printf("\n\n\n==== Tarefa 7 ===\n");
-k = ceil(1 + 3.322 * log(n))
+k = ceil(1 + 3.322 * log(n));
 [nn_hist xx_hist] = hist(xx, k);
 delta_x = xx_hist(2) - xx_hist(1);
 [yy_hist xx_hist] = hist(xx, k, 1/delta_x);
-hist(xx, k, 1/delta_x)
+hist(xx, k, 1/delta_x);
 xx_fit = 0:0.01:8;
 plot(xx_fit, wblpdf(xx_fit, lambda_estimate, k_estimate));
 yy_hat = wblpdf(xx_hist, lambda_estimate, k_estimate);
-RSS = sumsq(yy_hat - yy_hist)
+RSS = sumsq(yy_hat - yy_hist);
+
+
+
 
 
 % Tarefa 8
@@ -266,6 +310,13 @@ plot(xx_fit, normpdf(xx_fit, mu_estimate, sigma_estimate));
 yy_hat = normpdf(xx_hist, mu_estimate, sigma_estimate);
 RSS = sumsq(yy_hat - yy_hist)
 
+% Adicionar legenda
+legend('y observado','y predito pela FDP','ajuste com a distribuicao proposta');
+
+xlabel('Intervalos');
+ylabel('Frequência');
+title('Estimativa da FDP com Mínimos Quadrados e Histograma');
+grid on;
 
 
 % Seção 4
@@ -284,13 +335,20 @@ FDP_Pareto = @(x, mu, sigma, ksi) 1/sigma * (1 + ksi * (x - mu) / sigma) .^ (-1/
 xx = 0:0.01:5;
 figure();
 hold on;
-plot(xx, FDP_Pareto(xx, 0, 1, 1));
-plot(xx, FDP_Pareto(xx, 0, 1, 5));
-plot(xx, FDP_Pareto(xx, 0, 1, 20));
-plot(xx, FDP_Pareto(xx, 0, 2, 1));
-plot(xx, FDP_Pareto(xx, 0, 2, 5));
-plot(xx, FDP_Pareto(xx, 0, 2, 20));
+plot(xx, FDP_Pareto(xx, 0, 1, 1),'r');
+plot(xx, FDP_Pareto(xx, 0, 1, 5),'g');
+plot(xx, FDP_Pareto(xx, 0, 1, 20),'b');
+plot(xx, FDP_Pareto(xx, 0, 2, 1),'r--');
+plot(xx, FDP_Pareto(xx, 0, 2, 5),'g--');
+plot(xx, FDP_Pareto(xx, 0, 2, 20),'b--');
 
+
+% Adicionar legenda
+legend('\sigma = 1, \xi = 1','\sigma = 1,\xi = 5', '\sigma = 1, \xi = 20','\sigma = 2, \xi = 1','\sigma =1, \xi = 1', '\sigma = 2, \xi = 5', '\sigma = 2, \xi = 20');
+
+xlabel('s');
+ylabel('P');
+title('Distribuicao Generalizada de Pareto para FDP');
 
 % Tarefa 3
 function retval = FDA_Pareto(x, mu, sigma, ksi)
@@ -302,13 +360,20 @@ function retval = FDA_Pareto(x, mu, sigma, ksi)
 endfunction
 figure();
 hold on;
-plot(xx, FDA_Pareto(xx, 0, 1, 1));
-plot(xx, FDA_Pareto(xx, 0, 1, 5));
-plot(xx, FDA_Pareto(xx, 0, 1, 20));
-plot(xx, FDA_Pareto(xx, 0, 2, 1));
-plot(xx, FDA_Pareto(xx, 0, 2, 5));
-plot(xx, FDA_Pareto(xx, 0, 2, 20));
+plot(xx, FDA_Pareto(xx, 0, 1, 1),'r');
+plot(xx, FDA_Pareto(xx, 0, 1, 5),'g');
+plot(xx, FDA_Pareto(xx, 0, 1, 20),'b');
+plot(xx, FDA_Pareto(xx, 0, 2, 1),'r--');
+plot(xx, FDA_Pareto(xx, 0, 2, 5),'g--');
+plot(xx, FDA_Pareto(xx, 0, 2, 20),'b--');
 
+
+% Adicionar legenda
+legend('\sigma = 1, \xi = 1','\sigma = 1,\xi = 5', '\sigma = 1, \xi = 20','\sigma = 2, \xi = 1','\sigma =1, \xi = 1', '\sigma = 2, \xi = 5', '\sigma = 2, \xi = 20');
+
+xlabel('s');
+ylabel('P');
+title('Distribuicao Generalizada de Pareto para FDA');
 
 % Tarefa 4
 n = 1000;
@@ -331,6 +396,9 @@ xx_fit = 0:0.01:12;
 yy_hat = FDP_Pareto(xx_hist, mu_estimate, sigma_estimate, ksi_estimate);
 plot(xx_fit, FDP_Pareto(xx_fit, mu_estimate, sigma_estimate, ksi_estimate));
 RSS = sumsq(yy_hat - yy_hist)
+xlabel('s');
+ylabel('P');
+title('FDP sujeito a Distribuicao de Paretto Generalizada');
 
 % PROBLEMA PRÁTICO
 printf("\n\n\n");
