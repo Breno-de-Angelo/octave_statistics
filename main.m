@@ -389,11 +389,10 @@ k = ceil(1 + 3.322 * log(n))
 delta_x = xx_hist(2) - xx_hist(1);
 [yy_hist xx_hist] = hist(xx, k, 1/delta_x);
 mu_estimate = 0
-expected_value = 1 / n * sum(xx)
-variance = 1 / (n - 1) * sum ((xx - expected_value) .^ 2)
-ksi_estimate = 1/2 * (1 - (expected_value - mu_estimate) ^ 2 / variance)
-sigma_estimate =  (expected_value - 0) * (1 - ksi_estimate)
 xx_fit = 0:0.01:12;
+[params] = gpfit(xx)
+ksi_estimate = params(1)
+sigma_estimate = params(2)
 yy_hat = FDP_Pareto(xx_hist, mu_estimate, sigma_estimate, ksi_estimate);
 plot(xx_fit, FDP_Pareto(xx_fit, mu_estimate, sigma_estimate, ksi_estimate));
 RSS = sumsq(yy_hat - yy_hist)
